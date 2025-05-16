@@ -22,3 +22,9 @@ export type YDocMeta = {
   roomId: string,
 }
 
+export type LoginRequirements = {
+  email: string;
+  password: string;
+  displayName?: string;
+}
+

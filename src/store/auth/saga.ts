@@ -19,6 +19,7 @@ function* handleLogin(action: {type: string; payload: {email: string; password: 
   try {
     const { email, password } = action.payload;
     const userCredential = yield call(handleAuthLogin, email, password);
+    
     yield put(loginSuccess({
        uid: userCredential.user.uid, 
        displayName: userCredential.user.displayName,
@@ -46,11 +47,11 @@ function* handleLogout() {
   }
 }
 
-function* handleSignUp(action: {type: string; payload: {email: string; password: string; userName: string} }): Generator {
+function* handleSignUp(action: {type: string; payload: {email: string; password: string; displayName: string} }): Generator {
   try{
-    const { email, password, userName } = action.payload;
+    const { email, password, displayName } = action.payload;
     //サインアップ
-    const userCredential = yield call(handleAuthSignUp, email, password, userName);
+    const userCredential = yield call(handleAuthSignUp, email, password, displayName);
     //サインアップが成功したらそのままログイン
     if(!userCredential) throw new Error("user undefined")
     const userLoginCredential: UserCredential = yield call(handleAuthLogin, email, password);

@@ -9,6 +9,8 @@ import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 
 
 import type { UserType } from "../../../types/document";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store";
 
 
 
@@ -22,18 +24,17 @@ type Props = {
 
 export const TipTap:FC<Props> = memo((props) => {
   if(!ydoc) return<>start ws<BeatLoader /></>
+  const user = useSelector((state: RootState)=> state.auth.user);
+  if(!user) return <>login failed</>
+
   const currentUser = useMemo(() => {
-    const testuser: UserType = {
-      uid: crypto.randomUUID(),
-      displayName: `testuser-${crypto.randomUUID()}`,
-      email: "text@example.com",
-    };
+    
     return {
-      id: testuser.uid,
-      name: testuser.displayName,
+      id: user.uid,
+      name: user.displayName,
       color: assignRandomColor(),
     };
-  }, []);
+  }, [user]);
 
   const { content, onChange } = props;
   const editor = useEditor( 

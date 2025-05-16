@@ -7,12 +7,14 @@ import { wsConnectRequest } from "../../store/ws/slice";
 import { initializeDocument } from "../../store/document/slice";
 import type { RootState } from "../../store";
 import { useUploadToYjs } from "../../hooks/useUploadToYjs";
+import { BeatLoader } from "react-spinners";
 
 
 
 
 export const EditorPage: FC = () => {
   const { loadState, message } = useNotification();
+  const user = useSelector((state: RootState)=> state.auth.user);
   const dispatch = useDispatch();
 
   const handleStartWebsocket = () => {
@@ -29,13 +31,14 @@ export const EditorPage: FC = () => {
   
     
     
-  
+  if(!user){return(<></>)}
 
   return(
     <>
       <button onClick={handleStartWebsocket}>ws接続開始</button>  
       <div className="page-body">
         <h2>this is EditorPage</h2>
+        <h3>ようこそ {user.displayName}</h3>
         <div className="document-title">
           {document && 
           <>
@@ -45,7 +48,7 @@ export const EditorPage: FC = () => {
           }
         </div>
         
-        <EditorRenderer document={document} onChangeJsonContent={onChangeJsonContent}/>
+        <EditorRenderer document={document} onChangeJsonContent={onChangeJsonContent} />
       </div>
 
 

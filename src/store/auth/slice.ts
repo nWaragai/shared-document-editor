@@ -3,7 +3,7 @@ import type { UserType } from "../../types/document";
 import type { NotificationState } from "../../types/notification";
 import { updateNotificationState } from "../document/slice";
 import { notificationMessages } from "../../hooks/useNotificationMessages";
-import { actionChannel } from "redux-saga/effects";
+
 
 
 interface AuthState {
@@ -33,11 +33,13 @@ export const authSlice = createSlice({
   name: 'user',
   initialState,
   reducers:{
-    loginRequest(state, _: PayloadAction<UserType>){
+    loginRequest(state, _: PayloadAction<{email: string, password: string}>){
       updateNotificationState(state.notification, "request", "authLogin");
       state.notificationMessage = notificationMessages["loginRequest"];
     },
-    loginSuccess(state, _: PayloadAction<UserType>){
+    loginSuccess(state, action: PayloadAction<UserType>){
+      state.user = action.payload;
+      state.isAuthenticated = true;
       updateNotificationState(state.notification, "success", "authLogin");
       state.notificationMessage = notificationMessages["loginSuccess"];
     },
@@ -45,15 +47,20 @@ export const authSlice = createSlice({
       updateNotificationState(state.notification, "error", "authLogin", action.payload);
       
     },
-    signupRequest(state, _: PayloadAction<UserType>){
+    signupRequest(state, _: PayloadAction<{email:string, password: string, displayName: string}>){
+      console.log("signup request")
       updateNotificationState(state.notification, "request", "authLogin");
       state.notificationMessage = notificationMessages["signupRequest"];
     },
-    signupSuccess(state, _: PayloadAction<UserType>){
+    signupSuccess(state, action: PayloadAction<UserType>){
+      console.log("signup success")
+      state.user = action.payload;
+      state.isAuthenticated = true; 
       updateNotificationState(state.notification, "success", "authLogin");
       state.notificationMessage = notificationMessages["signupSuccess"];
     },
     signupFailure(state, action: PayloadAction<string>){
+      console.log("signup failed")
       updateNotificationState(state.notification, "error", "authLogin", action.payload);
       
     },
@@ -64,15 +71,21 @@ export const authSlice = createSlice({
     logoutSuccess(state, _: PayloadAction){
       updateNotificationState(state.notification, "success", "authLogin");
       state.notificationMessage = notificationMessages["logoutSuccess"];
+      state.isAuthenticated = false;
+      state.user = null;
     },
     logoutFailure(state, action: PayloadAction<string>){
       updateNotificationState(state.notification, "error", "authLogin", action.payload);
-      
     },
+    setUserFromAuthState(state, action: PayloadAction<UserType| null>){
+      state.user = action.payload;
+      state.isAuthenticated = true;
+    }
 
   }
 })
 
 
-export const { loginRequest,loginFailure,loginSuccess,logoutFailure,logoutRequest,logoutSuccess,signupFailure,signupRequest,signupSuccess } = authSlice.actions;
+export const { loginRequest,loginFailure,loginSuccess,logoutFailure,logoutRequest,logoutSuccess,signupFailure,signupRequest,signupSuccess, setUserFromAuthState } = authSlice.actions;
 
+export const authReducer = authSlice.reducer;

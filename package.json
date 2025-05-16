@@ -20,6 +20,7 @@
     "firebase": "^11.7.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.0",
     "react-spinners": "^0.17.0",

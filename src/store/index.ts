@@ -6,6 +6,8 @@ import { all, fork } from "redux-saga/effects";
 import { watchYjsSaga } from "./ws/saga";
 import { wsReducer } from "./ws/slice";
 import { documentReducer } from "./document/slice";
+import { authReducer } from "./auth/slice";
+import authSaga from "./auth/saga";
 
 
 
@@ -14,6 +16,7 @@ const sagaMiddleware = createSagaMiddleware();
 export function* rootSaga(){
   yield all([
     fork(watchYjsSaga),
+    fork(authSaga),
   ])
 }
 
@@ -22,6 +25,7 @@ export const store = configureStore({
   reducer: {
     yjsWebsocket: wsReducer,
     document: documentReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({thunk: false}).concat(sagaMiddleware),
