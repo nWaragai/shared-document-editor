@@ -1,12 +1,12 @@
 import type { JSONContent } from "@tiptap/react";
 
 
-export type DocumentType = {
+export type DocType = {
   id: string,               //ドキュメントid
   title: string,
   createdBy: string,        //作成者id
   collaborators: string[],  //共同作業者id
-  content: JSONContent,
+  jsonContent: JSONContent,
   createdAt: string,
   updatedAt: string,
 };

@@ -22,3 +22,25 @@
 body{
   background-color: #f5f5f5;
 }
+
+.notification-container{
+  position: fixed;
+  display: flex;
+  z-index: 10;
+  bottom: 0%;
+  right: 0%;
+  padding: 4px;
+  height: 50px;
+  border-radius: 4px;
+  color: whitesmoke;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: x-large;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease-in-out forwards;
+  transition: opacity 0.3s ease-out;
+}
+.notification-container.hide{
+  animation: fadeOut 0.5s ease-in-out forwards;
+}
