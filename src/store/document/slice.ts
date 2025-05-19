@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { DocType } from "../../types/document";
+import type { DocMeta, DocType } from "../../types/document";
 import type { NotificationGroup, NotificationState } from "../../types/notification";
 import type { JSONContent } from "@tiptap/react";
 
@@ -10,6 +10,8 @@ interface DocumentState {
     "fetchDocument": NotificationState,
     "saveDocument" : NotificationState
   },
+  isDirty: boolean,
+  availableDocs: DocMeta[],
 }
 
 const initialState: DocumentState = {
@@ -27,7 +29,10 @@ const initialState: DocumentState = {
       success: false,
       error: null,
     },
-  }
+  },
+  isDirty: false,
+  availableDocs: [],
+
 }
 
 export const updateNotificationState = (
@@ -66,7 +71,7 @@ export const documentSlice = createSlice({
   name: 'document',
   initialState: initialState,
   reducers:{
-    fetchDocumentRequest(state, _: PayloadAction<string>){
+    fetchDocumentRequest(state, _: PayloadAction<DocMeta>){
       updateNotificationState(state.notification, "request", "fetchDocument");
     },
     fetchDocumentSuccess(state, action:PayloadAction<DocType>){
@@ -76,11 +81,12 @@ export const documentSlice = createSlice({
     fetchDocumentFailure(state, action:PayloadAction<string>){
       updateNotificationState(state.notification, "error", "fetchDocument", action.payload)
     },
-    saveDocumentRequest(state, _: PayloadAction<DocType>){
+    saveDocumentRequest(state, _: PayloadAction){
       updateNotificationState(state.notification, "request", "saveDocument");
     },
-    saveDocumentSuccess(state, _){
+    saveDocumentSuccess(state, _: PayloadAction){
       updateNotificationState(state.notification, "success", "saveDocument");
+      state.isDirty = false;
     },
     saveDocumentFaliure(state, action: PayloadAction<string>){
       updateNotificationState(state.notification, "error", "saveDocument", action.payload);
@@ -95,7 +101,22 @@ export const documentSlice = createSlice({
     },
     initializeDocument(state, _: PayloadAction){
       state.document = defaultDocument;
-    }
+    },
+    markDirty(state, _: PayloadAction){
+      state.isDirty = true;
+    },
+    fetchDocListRequest(state, _: PayloadAction){
+      updateNotificationState(state.notification, "request", "fetchDocument");
+    },
+
+    fetchDocListSuccess(state, action: PayloadAction<DocMeta[]>){
+      updateNotificationState(state.notification, "success", "fetchDocument");
+      state.availableDocs = action.payload
+    },
+
+    fetchDocListFailure(state, action: PayloadAction<string>){
+      updateNotificationState(state.notification, "error", "fetchDocument", action.payload);
+    },
     
   }
 })
@@ -135,6 +156,10 @@ export const {
   setJsonContentFromYjs,
   setTitleFromYjs,
   initializeDocument,
+  markDirty,
+  fetchDocListRequest,
+  fetchDocListFailure,
+  fetchDocListSuccess,
 
 } = documentSlice.actions;
 

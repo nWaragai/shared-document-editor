@@ -1,6 +1,9 @@
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import type { JSONContent } from '@tiptap/react';
+import type { AppDispatch } from '../store';
+import { markDirty, saveDocumentRequest } from '../store/document/slice';
+import type { DocType } from '../types/document';
 
 
 
@@ -112,3 +115,34 @@ export const getYdoc = (): Y.Doc => {
   if (!ydoc) throw new Error('Yjs document is not initialized');
   return ydoc;
 };
+
+//保存処理の発火(saga側でデバウンス処理)
+export const handleFireStoreSync = (dispatch: AppDispatch) => {
+  if(!ydoc) return;
+  ydoc.on('update',() => {
+    dispatch(markDirty())
+  })
+}
+
+export const exportYjsSnapshot = (updatedBy: string): DocType => {
+  // 1. Yjs doc & Map を取得
+  const ydoc: Y.Doc          = getYdoc()
+  const ymap: Y.Map<any>     = getYjsContentMap()
+
+  // 2. 各フィールドを安全に取り出し
+  const title        = ymap.get('title')        as string | undefined
+  const jsonContent  = ymap.get('jsonContent')  as any     | undefined
+
+  // 3. Firestore に書き込む形へ整形
+  const snapshot: DocType = {
+    id          : ydoc.guid,          // or Firestore docId
+    title       : title ?? '',
+    createdBy   : ymap.get('createdBy') ?? updatedBy,
+    collaborators: ymap.get('collaborators') ?? [],
+    jsonContent  : jsonContent ?? { type: 'doc', content: [] },
+    createdAt   : ymap.get('createdAt') ?? new Date().toISOString(),
+    updatedAt   : new Date().toISOString(),
+  }
+
+  return snapshot
+}

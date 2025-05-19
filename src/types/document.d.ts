@@ -10,6 +10,14 @@ export type DocType = {
   createdAt: string,
   updatedAt: string,
 };
+export type DocMeta = {
+  id: string,               //ドキュメントid
+  title: string,            //タイトル
+  createdBy: string,        //作成者id
+  collaborators: string[],  //共同作業者id
+  createdAt: string,
+  updatedAt: string,
+}
 
 export type UserType = {
   uid: string,
