@@ -16,8 +16,8 @@ import Underline from "@tiptap/extension-underline";
 import { IoMdCode } from "react-icons/io";
 
 import { GoListOrdered, GoListUnordered } from "react-icons/go";
-
-
+import { FontSize } from "../../../extensions/FontSize";
+import Highlight from '@tiptap/extension-highlight'
 
 
 
@@ -52,7 +52,9 @@ export const TipTap:FC<Props> = memo((props) => {
   
   const editor = useEditor({extensions: [ 
     StarterKit.configure({ history: false }),
+    FontSize,
     Underline,
+    Highlight.configure({ multicolor: true }),
     Collaboration.configure({ document: ydoc }),
     CollaborationCursor.configure({
       provider,

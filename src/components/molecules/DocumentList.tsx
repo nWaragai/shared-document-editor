@@ -4,11 +4,11 @@ import type { RootState } from "../../store";
 import type { DocMeta } from "../../types/document";
 import { fetchDocListRequest, fetchDocumentRequest } from "../../store/document/slice";
 import { BeatLoader } from "react-spinners";
-import { disconnectYjs, restoreYjsFromRedux } from "../../api/yjsSync";
+
 import { wsConnectRequest } from "../../store/ws/slice";
-import { FaMinusCircle } from "react-icons/fa";
-import { IoMdCloseCircle } from "react-icons/io";
-import { AiFillCloseSquare, AiOutlineCloseSquare } from "react-icons/ai";
+
+
+import { AiFillCloseSquare } from "react-icons/ai";
 
 
 
@@ -27,6 +27,7 @@ export const DocumentListContainer: FC = memo(() => {
 
   const onClickElement = (docmeta: DocMeta) => {
     dispatch(fetchDocumentRequest(docmeta));
+    setOpen(false);
   }
   const onClickFetchList = () => {
     setOpen(true);
