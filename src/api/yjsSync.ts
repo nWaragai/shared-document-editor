@@ -1,9 +1,11 @@
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-import type { JSONContent } from '@tiptap/react';
+import { Node, type JSONContent } from '@tiptap/react';
 import type { AppDispatch } from '../store';
-import { markDirty, saveDocumentRequest } from '../store/document/slice';
+import { markDirty } from '../store/document/slice';
 import type { DocType } from '../types/document';
+
+
 
 
 
@@ -15,7 +17,9 @@ export type YjsContentMap = {
 export let ydoc: Y.Doc | null = null;
 export let provider: WebsocketProvider | null = null;
 
-
+export const getYjsState = () => {
+  return {ydoc, provider}
+}
 
 const colorPalette = [
   '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
@@ -66,23 +70,82 @@ export const assignRandomColor = () => {
 //   });
 // }
 
-export const initYjsConnection = (roomId: string) => {
+export const initYjsConnection = (roomId?: string, user?: string) => {
   try{
     if (ydoc || provider) return; // 再初期化防止
-
+    const id = roomId || `room-${crypto.randomUUID()}`
     ydoc = new Y.Doc();
-    provider = new WebsocketProvider('ws://localhost:1234', roomId, ydoc);
+    provider = new WebsocketProvider('ws://localhost:1234', id, ydoc);
+    console.log("created new ydoc and provider")
 
     provider.on('status', (event: { status: string }) => {
       console.log(`Yjs WebSocket connection status: ${event.status}`);
     });
-    return ydoc;
+
+    //新規作成時
+    if(!roomId){
+      const ymap = getYjsContentMap();
+      const userName = user || 'unknownUser';
+      ymap.set('docId', `doc-${crypto.randomUUID()}`);
+      ymap.set('createdBy', userName);
+      ymap.set('createdAt', new Date().toISOString());
+      ymap.set('roomId', id);
+    }
 
   }catch (error){
-
+    throw error;
   }
 
 };
+
+
+//復旧する関数
+export const restoreYjsFromRedux = (reduxDoc: DocType) => {
+  if(!ydoc) return console.log("connect to yjs");
+  
+  // 1. ydocの状態サイズをチェック（update sizeが0なら空）
+  const ymap = getYjsContentMap();
+  const content: any = ymap.get("jsonContent");
+  const title: any = ymap.get("title");
+  console.log("title", title, "content", content, "ymap", ymap);
+  if((title || content)){
+    console.log('Yjs document already initialized.');
+    return;
+  }
+  
+  const stateUpdate = Y.encodeStateAsUpdate(ydoc);
+  if (stateUpdate.length > 0) {
+    // 既に初期化済みの状態があるので復旧不要
+ 
+  }
+
+  // 2. reduxDoc.jsonContentが存在することを確認
+  if (!reduxDoc.jsonContent) {
+    console.warn('No jsonContent to restore from.');
+    return;
+  }
+
+  //復旧
+  
+  ymap.set('title', reduxDoc.title);
+  ymap.set('docId', reduxDoc.id);
+  ymap.set('collaborators', reduxDoc.collaborators);
+  ymap.set('createdBy', reduxDoc.createdBy);
+  ymap.set('updatedAt', reduxDoc.updatedAt);
+  ymap.set('roomId', reduxDoc.roomId);
+  ymap.set('jsonContent', reduxDoc.jsonContent);
+
+  
+
+  //tip-tap yjs連携用の復旧
+  Object.entries(reduxDoc.jsonContent).forEach(([key,value])=> {
+    ymap.set(key, value);
+  });
+
+  console.log('Yjs document restored from Redux.');
+};
+
+
 
 // YjsのMap取得関数
 export const getYjsContentMap = (): Y.Map<any> => {
@@ -126,23 +189,40 @@ export const handleFireStoreSync = (dispatch: AppDispatch) => {
 
 export const exportYjsSnapshot = (updatedBy: string): DocType => {
   // 1. Yjs doc & Map を取得
-  const ydoc: Y.Doc          = getYdoc()
+  // const ydoc: Y.Doc          = getYdoc()
   const ymap: Y.Map<any>     = getYjsContentMap()
 
   // 2. 各フィールドを安全に取り出し
   const title        = ymap.get('title')        as string | undefined
   const jsonContent  = ymap.get('jsonContent')  as any     | undefined
+  if(!jsonContent) console.log("failed save!jsonContent undefined!");
+
 
   // 3. Firestore に書き込む形へ整形
   const snapshot: DocType = {
-    id          : ydoc.guid,          // or Firestore docId
+    id          : ymap.get('docId') ?? `corruptedId`,          // or Firestore docId
     title       : title ?? '',
     createdBy   : ymap.get('createdBy') ?? updatedBy,
     collaborators: ymap.get('collaborators') ?? [],
     jsonContent  : jsonContent ?? { type: 'doc', content: [] },
     createdAt   : ymap.get('createdAt') ?? new Date().toISOString(),
     updatedAt   : new Date().toISOString(),
+    roomId      : ymap.get('roomId') ?? `corruptedId`
   }
 
+
   return snapshot
+}
+
+
+export const disconnectYjs = () => {
+  if(!ydoc || !provider) return console.log("no previous connection");
+  provider.disconnect();
+  provider.destroy();
+  ydoc.destroy();
+  provider = null;
+  ydoc = null;
+  
+
+  console.log("destoryed ydoc", ydoc);
 }

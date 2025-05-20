@@ -18,6 +18,7 @@ export const fetchDocListFromFireStore = async(): Promise<DocMeta[]> => {
         title: meta.title,
         createdBy: meta.createdBy,
         collaborators: meta.collaborators,
+        roomId: meta.roomId,
       };
       DocList.push(result);
     })

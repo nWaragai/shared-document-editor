@@ -1,8 +1,8 @@
-import { memo, useMemo, type FC } from "react";
-import { FloatingMenu, BubbleMenu, EditorContent, useEditor, type JSONContent } from "@tiptap/react";
+import { memo, useEffect, useMemo, type FC } from "react";
+import { FloatingMenu, BubbleMenu, EditorContent, useEditor, type JSONContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Collaboration from "@tiptap/extension-collaboration";
-import {  assignRandomColor, provider, ydoc } from "../../../api/yjsSync";
+import {  assignRandomColor, getYjsState } from "../../../api/yjsSync";
 
 import { BeatLoader } from "react-spinners";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
@@ -14,7 +14,7 @@ import type { RootState } from "../../../store";
 import { FloatingMenuButton } from "../../atoms/buttons/tiptap/FloatingMenuButton";
 import Underline from "@tiptap/extension-underline";
 import { IoMdCode } from "react-icons/io";
-import { MdFormatListBulleted } from "react-icons/md";
+
 import { GoListOrdered, GoListUnordered } from "react-icons/go";
 
 
@@ -23,49 +23,64 @@ import { GoListOrdered, GoListUnordered } from "react-icons/go";
 
 type Props = {
   content: JSONContent,
-  onChange: (content: JSONContent) => void,
+  onChange: (content : JSONContent) => void,
   user?: UserType,
+  setEditor: (editor: Editor)=> void,
 }
 
+
+
+
+
 export const TipTap:FC<Props> = memo((props) => {
-  if(!ydoc) return<>start ws<BeatLoader /></>
+  const {ydoc, provider} = getYjsState();
+  const  { onChange, setEditor } = props;
+
+  if(!ydoc || !provider) return<>start ws<BeatLoader /></>
   const user = useSelector((state: RootState)=> state.auth.user);
   if(!user) return <>login failed</>
-
+  // const { content, onChange } = props;
+  
   const currentUser = useMemo(() => {
-    
+    if (!user) return null;
     return {
       id: user.uid,
       name: user.displayName,
       color: assignRandomColor(),
     };
   }, [user]);
-
-  const { content, onChange } = props;
-  const editor = useEditor( 
-    {
-    extensions:[
-      StarterKit.configure({
-        history: false,
-      }),
-      Underline,
-      Collaboration.configure({
-        document: ydoc
-      }),
-      CollaborationCursor.configure({
-        provider: provider,
-        user: {
-          id: currentUser.id, 
-          name: currentUser.name,
-          color: currentUser.color,
-        }
-      })
-    ],
-    content: content,
-    onUpdate: ({ editor })=> {
-      onChange(editor.getJSON())
-    }
+  
+  const editor = useEditor({extensions: [ 
+    StarterKit.configure({ history: false }),
+    Underline,
+    Collaboration.configure({ document: ydoc }),
+    CollaborationCursor.configure({
+      provider,
+      user: currentUser!,
+    }), 
+   ],
+   onUpdate: ({ editor })=>{
+    onChange(editor.getJSON());
+   }
   })
+
+
+  useEffect(()=> {
+    if(editor){
+      setEditor(editor)
+    }
+  },[editor])
+  // useEditor({
+  //   extensions,
+  //   content: content ?? undefined,
+  //   onCreate: ({editor}) => {
+  //     provider.connect()
+  //   },
+  //   onUpdate: ({ editor }) => {
+  //     onChange(editor.getJSON());
+  //   }
+  // }) 
+  
 
   //editorが変化するたびにyjsと同期
   // useEffect (()=> {

@@ -8,6 +8,7 @@ import { wsReducer } from "./ws/slice";
 import { documentReducer } from "./document/slice";
 import { authReducer } from "./auth/slice";
 import authSaga from "./auth/saga";
+import { watchDirty, watchFetchDocument } from "./document/saga";
 
 
 
@@ -17,6 +18,8 @@ export function* rootSaga(){
   yield all([
     fork(watchYjsSaga),
     fork(authSaga),
+    fork(watchDirty),
+    fork(watchFetchDocument),
   ])
 }
 

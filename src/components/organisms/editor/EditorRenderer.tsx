@@ -2,7 +2,9 @@ import { memo, type FC } from "react";
 import { TipTap } from "./TipTap";
 
 import type { DocType } from "../../../types/document";
-import type { JSONContent } from "@tiptap/react";
+import type { Editor, JSONContent } from "@tiptap/react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store";
 
 
 // const content = {
@@ -23,17 +25,20 @@ import type { JSONContent } from "@tiptap/react";
 type Props={
   document: DocType | null,
   onChangeJsonContent: (content: JSONContent) => void,
+  setEditor: (editor: Editor)=> void;
 }
 
 
 
 export const EditorRenderer: FC<Props> = (props) => {
-  const { document, onChangeJsonContent} = props;
-  
+  const { document, onChangeJsonContent, setEditor} = props;
+  const wsSuccess = useSelector((state: RootState)=> state.yjsWebsocket.notification.wsConnect.success);
+
+
   return (
     <div className="editor-document-container">
-      {document && 
-        <TipTap content={document.jsonContent} onChange={onChangeJsonContent}/>
+      {document && wsSuccess && 
+        <TipTap content={document.jsonContent} onChange={onChangeJsonContent} setEditor={setEditor}/>
       }
     </div>
   )

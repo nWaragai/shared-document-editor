@@ -71,7 +71,7 @@ export const documentSlice = createSlice({
   name: 'document',
   initialState: initialState,
   reducers:{
-    fetchDocumentRequest(state, _: PayloadAction<DocMeta>){
+    fetchDocumentRequest(state, action: PayloadAction<DocMeta>){
       updateNotificationState(state.notification, "request", "fetchDocument");
     },
     fetchDocumentSuccess(state, action:PayloadAction<DocType>){
@@ -105,7 +105,7 @@ export const documentSlice = createSlice({
     markDirty(state, _: PayloadAction){
       state.isDirty = true;
     },
-    fetchDocListRequest(state, _: PayloadAction){
+    fetchDocListRequest(state, action: PayloadAction){
       updateNotificationState(state.notification, "request", "fetchDocument");
     },
 
@@ -142,6 +142,7 @@ export const defaultDocument: DocType = {
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  roomId: "none",
 
 }
 

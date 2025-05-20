@@ -9,6 +9,7 @@ export type DocType = {
   jsonContent: JSONContent,
   createdAt: string,
   updatedAt: string,
+  roomId: string,
 };
 export type DocMeta = {
   id: string,               //ドキュメントid
@@ -17,6 +18,7 @@ export type DocMeta = {
   collaborators: string[],  //共同作業者id
   createdAt: string,
   updatedAt: string,
+  roomId: string,
 }
 
 export type UserType = {

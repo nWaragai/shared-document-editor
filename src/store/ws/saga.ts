@@ -1,21 +1,25 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { initYjsConnection, initYjsContent, updateJsonContent, updateTitle } from '../../api/yjsSync';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { disconnectYjs, initYjsConnection, initYjsContent, restoreYjsFromRedux, updateJsonContent, updateTitle } from '../../api/yjsSync';
 
 import { wsConnectFailure, wsConnectRequest, wsConnectSuccess, wsSendJsonContent, wsSendTitle } from './slice';
-
-import type { Doc } from 'yjs';
+import type { RootState } from '..';
+import type { DocType } from '../../types/document';
 
 export function* startYjsSaga(action: ReturnType<typeof wsConnectRequest> ): Generator {
   
 
   try {
-    const ydoc: Doc = yield call(initYjsConnection, action.payload.roomId);
-    if (action.payload.initialContent) {
-      yield call(initYjsContent, action.payload.initialContent);
-    }
-    yield put(wsConnectSuccess());
+    if(!action.payload.userName) throw new Error("invalid user: please login");
+    yield call (disconnectYjs);
 
-    // WebSocket接続成功時の通知などあればここで dispatch
+    yield call(initYjsConnection, action.payload.roomId, action.payload.userName);
+
+    yield put(wsConnectSuccess());
+    
+    const doc: DocType | null = yield select((state: RootState)=> state.document.document);
+    if(doc) {
+      yield call(restoreYjsFromRedux, doc);
+    }
   } catch (e: any) {
     yield put (wsConnectFailure(e.message))
     console.error('Yjs connection failed', e);

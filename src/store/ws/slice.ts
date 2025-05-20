@@ -33,7 +33,8 @@ export const wsSlice = createSlice({
   name: "ws",
   initialState,
   reducers: {
-    wsConnectRequest(state, _: PayloadAction<{ roomId: string, initialContent?: YjsContentMap }>) {
+    wsConnectRequest(state, _: PayloadAction<{ roomId?: string, userName?: string }>) {
+      console.log("connect request");
       updateNotificationState(state.notification, "request", "wsConnect");
       state.notificationMessage= notificationMessages["wsConnectRequest"];
     },

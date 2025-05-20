@@ -5,6 +5,7 @@ import type { RootState } from "..";
 import type { DocMeta, DocType } from "../../types/document";
 import { fetchDocListFromFireStore } from "../../firebase/fetchDocList";
 import { fetchDocumentContentFromFireStore } from "../../firebase/fetchDocumentContent";
+import { saveDocumentToFireStore } from "../../firebase/saveDocument";
 
 
 function* saveDocumentSaga(): Generator {
@@ -19,10 +20,10 @@ function* saveDocumentSaga(): Generator {
   try {
     yield put(saveDocumentRequest()); 
     // const ydoc: Y.Doc = yield call(getYdoc);      // 参照のみ
-    const snapshot = yield call (exportYjsSnapshot, new Date().toISOString());
+    const snapshot: DocType = yield call (exportYjsSnapshot, new Date().toISOString());
     
     //fireStoreに保存をする関数
-    yield call (saveDocToFireStore, snapshot);
+    yield call (saveDocumentToFireStore, snapshot);
     yield put(saveDocumentSuccess());
 
   } catch (error :any){

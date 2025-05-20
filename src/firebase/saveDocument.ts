@@ -16,8 +16,7 @@ export const saveDocumentToFireStore = async(document: DocType) => {
     batch.set(contentRef, {content: jsonContent});
 
     console.log("saving document");
-    await setDoc(contentRef, jsonContent);
-    await setDoc(metaRef, meta);
+    await batch.commit();
 
   }catch(error){
     console.error("ドキュメントの保存に失敗しました",error)

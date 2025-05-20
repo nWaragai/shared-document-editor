@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tiptap/extension-collaboration": "^2.12.0",
     "@tiptap/extension-collaboration-cursor": "^2.12.0",
+    "@tiptap/extension-history": "^2.12.0",
     "@tiptap/extension-underline": "^2.12.0",
     "@tiptap/pm": "^2.12.0",
     "@tiptap/react": "^2.12.0",
