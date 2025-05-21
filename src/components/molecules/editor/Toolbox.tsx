@@ -5,7 +5,7 @@ import { TiptapToolbarButton } from "../../atoms/buttons/tiptap/TipTapToolbarBut
 import { useTiptapToolBar } from "../../../hooks/useTiptapToolbar";
 import { ToolboxPulldown } from "./ToolBoxPulldown";
 import { ToolboxColorPicker } from "./ToolboxColorPicker";
-import {FaFileExport} from "react-icons/fa"
+import {FaFileExport, FaFolderPlus} from "react-icons/fa"
 
 import { SaveStateMessage } from "./SaveStateMessage";
 import { useSelector } from "react-redux";
@@ -26,7 +26,7 @@ export const ToolBar: FC<Props> = memo((props) => {
   return(
     <div className="toolbar-area">
       <div className="toolbar-filebuttons">
-        <button onClick={onClickNewFile}>新規作成</button>
+        <FaFolderPlus size={55} color="#f5f5f5" onClick={onClickNewFile}/>
         <DocumentListContainer />
         {editor && 
         <FaFileExport onClick={()=>exportTiptapToPdf(documentTitle)} size={50} color="#f5f5f5" />

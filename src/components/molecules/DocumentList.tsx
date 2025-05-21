@@ -9,6 +9,7 @@ import { wsConnectRequest } from "../../store/ws/slice";
 
 
 import { AiFillCloseSquare } from "react-icons/ai";
+import { FaFolder } from "react-icons/fa";
 
 
 
@@ -46,10 +47,7 @@ export const DocumentListContainer: FC = memo(() => {
 
   return (
     <div className="document-list-area">
-      <button
-        className="document-list-fetch-button"
-        onClick={onClickFetchList}
-      >ファイル</button>
+      <FaFolder size={55} onClick={onClickFetchList} color="#f5f5f5" className="document-list-fetch-button"/>
       {open &&
       <div className="document-list-dropdown">
         {loading? <BeatLoader /> : 

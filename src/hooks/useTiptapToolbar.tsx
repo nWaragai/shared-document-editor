@@ -35,6 +35,7 @@ export const fontFamilyOptions: SelectOption[] = [
   {label: <label style={{fontFamily: "Comic Sans MS, Comic Sans"}}>Comic Sans</label>, value: "Comic Sans MS, Comic Sans"},
   {label: <label style={{fontFamily: "Cursive"}}>cursive</label>, value: "cursive"},
   {label: <label style={{fontFamily: "M PLUS 1p, sans-serif"}}>M+1</label>, value: "M PlUS 1p, sans-serif"},
+  {label: <label style={{fontFamily: "Noto Serif JP, serif"}}>Noto Serif JP</label>, value: "Noto Serif JP"},
 ]
 
 export const useTiptapToolBar = (editor: Editor | null) => {

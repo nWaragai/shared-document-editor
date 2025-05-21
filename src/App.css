@@ -199,7 +199,9 @@ body{
 
 }
 .document-list-fetch-button{
-  height: 50px;
+  height: 55px;
+  margin: 0;
+  padding: 0;
 }
 
 .tiptap-toolbar-area{
@@ -211,6 +213,7 @@ body{
   
   display: flex;
   flex-wrap: nowrap;
+  transform: translateY(-8px);
   
 }
 .tiptap-toolbar-separator{
@@ -234,7 +237,7 @@ body{
 
 .toolbar-filebuttons{
   display: flex;
-  gap: 5px;
+  gap: 15px;
 }
 .toolbar-fontsize-selector{
   background-color: transparent;
