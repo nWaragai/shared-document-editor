@@ -17,11 +17,13 @@ import { IoMdCode } from "react-icons/io";
 
 import { GoListOrdered, GoListUnordered } from "react-icons/go";
 import { FontSize } from "../../../extensions/FontSize";
+import FontFamily from "@tiptap/extension-font-family"
 import Highlight from '@tiptap/extension-highlight';
 import Heading from "@tiptap/extension-heading";
 import Link from '@tiptap/extension-link';
-import TextStyle from '@tiptap/extension-text-style'
-import {Color} from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style';
+import TextAlign from '@tiptap/extension-text-align';
+import {Color} from '@tiptap/extension-color';
 
 
 
@@ -56,11 +58,15 @@ export const TipTap:FC<Props> = memo((props) => {
   }, [user]);
   
   const editor = useEditor({extensions: [ 
+    TextStyle,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
+    FontFamily,
     StarterKit.configure({ history: false, heading: false, }),
     Color,
     FontSize,
     Underline,
-    TextStyle,
     Heading.configure({levels: [1,2,3]}),
     Link.configure({
       openOnClick: false,

@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { DocMeta, DocType } from "../../types/document";
 import type { NotificationGroup, NotificationState } from "../../types/notification";
 import type { JSONContent } from "@tiptap/react";
+import { notificationMessages } from "../../hooks/useNotificationMessages";
 
 
 interface DocumentState {
@@ -12,6 +13,7 @@ interface DocumentState {
   },
   isDirty: boolean,
   availableDocs: DocMeta[],
+  notificationMessage: string | null,
 }
 
 const initialState: DocumentState = {
@@ -32,6 +34,7 @@ const initialState: DocumentState = {
   },
   isDirty: false,
   availableDocs: [],
+  notificationMessage: null,
 
 }
 
@@ -83,10 +86,12 @@ export const documentSlice = createSlice({
     },
     saveDocumentRequest(state, _: PayloadAction){
       updateNotificationState(state.notification, "request", "saveDocument");
+      state.notificationMessage= notificationMessages["saveRequest"];
     },
     saveDocumentSuccess(state, _: PayloadAction){
       updateNotificationState(state.notification, "success", "saveDocument");
       state.isDirty = false;
+      state.notificationMessage= notificationMessages["saveSuccess"];
     },
     saveDocumentFaliure(state, action: PayloadAction<string>){
       updateNotificationState(state.notification, "error", "saveDocument", action.payload);

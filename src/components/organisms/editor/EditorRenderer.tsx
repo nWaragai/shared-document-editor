@@ -36,9 +36,9 @@ export const EditorRenderer: FC<Props> = (props) => {
 
 
   return (
-    <div className="editor-document-container">
+    <div className="editor-document-container" id="tiptap">
       {document && wsSuccess && 
-        <TipTap content={document.jsonContent} onChange={onChangeJsonContent} setEditor={setEditor}/>
+        <TipTap content={document.jsonContent} onChange={onChangeJsonContent} setEditor={setEditor} />
       }
     </div>
   )

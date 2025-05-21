@@ -17,5 +17,8 @@ export const notificationMessages:Record<NotificationKey, string> ={
   "signupSuccess"      : "登録成功!",
   "signupFailure"      : "登録失敗!",
   "wsConnectRequest" : "yjs接続中...",
-  "wsConnectSuccess" : "yjs接続成功!"
+  "wsConnectSuccess" : "yjs接続成功!",
+  "saveRequest" : "保存中...",
+  "saveSuccess" : "保存成功!",
+
 } 

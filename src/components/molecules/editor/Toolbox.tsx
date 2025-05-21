@@ -5,6 +5,12 @@ import { TiptapToolbarButton } from "../../atoms/buttons/tiptap/TipTapToolbarBut
 import { useTiptapToolBar } from "../../../hooks/useTiptapToolbar";
 import { ToolboxPulldown } from "./ToolBoxPulldown";
 import { ToolboxColorPicker } from "./ToolboxColorPicker";
+import {FaFileExport} from "react-icons/fa"
+
+import { SaveStateMessage } from "./SaveStateMessage";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store";
+import { useExportToPdf } from "../../../hooks/useExportToPdf";
 
 type Props = {
   onClickNewFile : () => void;
@@ -14,12 +20,19 @@ type Props = {
 export const ToolBar: FC<Props> = memo((props) => {
   const { editor, onClickNewFile } = props
   const { buttonsList } = useTiptapToolBar(editor);
+  const documentTitle = useSelector((state: RootState) => state.document.document?.title) ?? "無題のドキュメント"
+  const { exportTiptapToPdf } = useExportToPdf();
 
   return(
     <div className="toolbar-area">
       <div className="toolbar-filebuttons">
         <button onClick={onClickNewFile}>新規作成</button>
         <DocumentListContainer />
+        {editor && 
+        <FaFileExport onClick={()=>exportTiptapToPdf(documentTitle)} size={50} color="#f5f5f5" />
+        }
+        <SaveStateMessage />
+        <></>
       </div>
       {editor && 
         <div className="tiptap-toolbar-area">

@@ -43,4 +43,6 @@ export type NotificationKey =
 | "signupFailure"
 | "wsConnectRequest"
 | "wsConnectSuccess"
+| "saveRequest"
+| "saveSuccess"
 
