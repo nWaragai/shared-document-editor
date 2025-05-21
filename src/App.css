@@ -214,6 +214,8 @@ body{
   background-color: teal;
   opacity: 0.8;
   margin: 5px 5px;
+  height: auto;
+  height: 20px;
 
 }
 
