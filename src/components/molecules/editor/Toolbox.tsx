@@ -4,6 +4,7 @@ import type { Editor } from "@tiptap/react";
 import { TiptapToolbarButton } from "../../atoms/buttons/tiptap/TipTapToolbarButton";
 import { fontSizeOptions, useTiptapToolBar } from "../../../hooks/useTiptapToolbar";
 import { ToolboxPulldown } from "./ToolBoxPulldown";
+import { ToolboxColorPicker } from "./ToolboxColorPicker";
 
 type Props = {
   onClickNewFile : () => void;
@@ -28,6 +29,8 @@ export const ToolBar: FC<Props> = memo((props) => {
             <TiptapToolbarButton label={item.label} onClick={item.onClick}/> :
             (item.buttonType === "pulldown" && item.onClickOption )?
             <ToolboxPulldown list={fontSizeOptions} placeholder={item.label} handleSelect={item.onClickOption} className="toolbar-fontsize-selector"/>:
+            (item.buttonType === "colorPicker" && item.onClickColor)? 
+            <ToolboxColorPicker label={item.label} onChangeColor={item.onClickColor}/> :
             null
             )}
         </div>      

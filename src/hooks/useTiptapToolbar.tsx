@@ -1,21 +1,22 @@
 import { type ReactElement } from "react"
 
 import type { Editor } from "@tiptap/react"
-import { MdRedo, MdSuperscript, MdUndo } from "react-icons/md"
+import { MdLink, MdRedo, MdSuperscript, MdUndo } from "react-icons/md"
 import type { SelectOption } from "../types/selectOption"
 import { TfiSmallcap } from "react-icons/tfi";
-import { BiHighlight } from "react-icons/bi";
+import { BiFontColor, BiHighlight } from "react-icons/bi";
 
-type ButtonType = "separator" | "button" | "pulldown"
+type ButtonType = "separator" | "button" | "pulldown" | "colorPicker"
 
 type TiptapButtonType = {
   label: ReactElement,
   onClick :()=> void,
   onClickOption?: (option: SelectOption | null) => void,
+  onClickColor? : (color: string)=> void,
   buttonType: ButtonType
 }
 
-const fontSizeList= ['9','12', '14', '16', '20', '25', '40']
+const fontSizeList= ['9','12', '14', '16', '20', '30', '40', '50']
 export const fontSizeOptions: SelectOption[] = fontSizeList.map(item=> ({label:item, value: item}));
 
 export const useTiptapToolBar = (editor: Editor | null) => {
@@ -27,6 +28,18 @@ export const useTiptapToolBar = (editor: Editor | null) => {
     const resultSize = !number? '14' : number<5? '5' :number>50? '50': `${number}`;
     editor.commands.setFontSize(`${resultSize}px`);
   }
+
+  const setLink = () => {
+    if(!editor) return;
+    const previousUrl = editor?.getAttributes('link').href;
+    const url = window.prompt('URLを入力してください', previousUrl);
+    if(url === null) return;
+    if(url ===''){
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }
   
   const buttonsList: TiptapButtonType[] = editor? [
     {label: <MdUndo /> , buttonType: "button",  onClick: ()=> editor.chain().focus().undo().run()},
@@ -36,11 +49,14 @@ export const useTiptapToolBar = (editor: Editor | null) => {
     {label: <i>I</i> , buttonType: "button", onClick: ()=> editor.chain().focus().toggleItalic().run()},
     {label: <u>U</u> , buttonType: "button", onClick: ()=> editor.chain().focus().toggleUnderline().run()},
     {label: <s>S</s> , buttonType: "button", onClick: ()=> editor.chain().focus().toggleStrike().run()},
-    {label: <BiHighlight /> , buttonType: "button", onClick: ()=> editor.chain().focus().toggleHighlight().run()},
+    {label: <BiHighlight style={{transform: "translateY(2px)"}}/> , buttonType: "colorPicker", onClick: ()=> editor.chain().focus().toggleHighlight().run(), onClickColor: (color)=>editor.chain().focus().toggleHighlight({color}).run()},
     {label: <MdSuperscript /> ,buttonType: "button", onClick: ()=> editor.chain().focus().toggleStrike().run()},
     {label: <></>, onClick: ()=>{}, buttonType: "separator"},
-    {label: <TfiSmallcap color="black"/> ,buttonType: "pulldown", onClick: ()=>{}, onClickOption: handleClickFontSizeOption}, //labelをplaceholderとするプルダウンを生成
+    {label: <BiFontColor style={{transform: "translateY(2px)"}} size={15}/> , buttonType: "colorPicker", onClick: ()=> {}, onClickColor: (color)=>editor.chain().focus().setColor(color).run()},
+    {label: <TfiSmallcap color="black" /> ,buttonType: "pulldown", onClick: ()=>{}, onClickOption: handleClickFontSizeOption}, //labelをplaceholderとするプルダウンを生成
     {label: <></>, onClick: ()=>{}, buttonType: "separator"},
+    {label: <MdLink style={{transform: "translateY(4px)"}}/> ,buttonType: "button", onClick: setLink},
+
   ]: []
 
 

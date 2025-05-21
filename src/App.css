@@ -190,7 +190,7 @@ body{
   outline: 8px teal solid;
   display: flex;
   flex-direction: column;
-  max-height: 80px;
+  max-height: 85px;
   gap: 2px;
 
 }
@@ -200,7 +200,7 @@ body{
 
 .tiptap-toolbar-area{
   width: 100% -20px;
-  height: auto;
+  min-height: 30px;
   padding: 0 10px;  
   border-radius: 16px;
   background-color: turquoise;
@@ -264,4 +264,19 @@ body{
 .css-1u9des2-indicatorSeparator {
   background-color: teal !important;
   transform: translateY(-2px);
+}
+
+.toolbar-colorPicker{
+  position: absolute;
+  z-index: 1000;
+  box-shadow: 0px 0px 2px;
+  transform: translateY(50%);
+}
+.toolbar-colorPicker-wrapper{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.toolbar-colorPicker-label{
+  transform: translateY(2px);
 }
